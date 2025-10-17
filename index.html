@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Halloween Party 🎃</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a1a, #333);
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #ff6f00;
+      margin-bottom: 10px;
+      animation: fadeIn 2s ease-in-out forwards;
+      text-shadow: 0 0 10px #ff6f00, 0 0 20px #ff6f00;
+    }
+
+    .info {
+      font-size: 1.2rem;
+      max-width: 600px;
+      line-height: 1.6;
+      margin: 5px 0;
+      color: #ff9800;
+      font-weight: bold;
+      animation: fadeIn 3s ease-in-out forwards;
+    }
+
+    .highlight {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    .countdown {
+      font-size: 2rem;
+      margin: 20px 0;
+      color: #ff3d00;
+      text-shadow: 0 0 5px #ff3d00, 0 0 10px #ff3d00;
+      animation: fadeIn 3s ease-in-out forwards;
+    }
+
+    .award {
+      font-size: 1.5rem;
+      color: #ff5722;
+      font-weight: bold;
+      margin: 15px 0;
+      animation: fadeIn 3s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Fondo con elementos flotantes (como calabazas, fantasmas, murciélagos) */
+    .floating-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .floating-element {
+      position: absolute;
+      width: 80px;       
+      height: 80px;      
+      background-size: contain;  
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0;
+      transform: translateY(110vh); 
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% { 
+        opacity: 1; 
+      }
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎃 Halloween Party 🎃</h1>
+
+    <p class="award">¡Premio al mejor disfraz! 🏆</p>
+    <p class="info">Ven y disfruta de una noche terrorífica con concursos y sorpresas.</p>
+    
+    <p class="highlight">📅 01 de Noviembre | 🕖 07:00 pm</p>
+    <div class="countdown" id="countdown"></div>
+    <p class="info">📍 Salón de Eventos Gaby</p>
+    <p class="info">Con la animación de <span class="highlight">JEAMPI THE BOY</span> & <span class="highlight">DJ LEONEL SANT</span></p>
+    <p class="info">Valor de la entrada: <span class="highlight">$1,50</span> ¡Entradas limitadas!</p>
+
+    <button id="playMusicBtn" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background-image: url('./images/calabaza.png');
+        background-size: cover;
+        background-position: center;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 0 15px #ff6f00;
+    ">
+</button>
+  </div>
+
+  <div class="floating-elements"></div>
+
+  <!-- Música repetitiva -->
+  <audio id="bgMusic" loop>
+    <source src="./music/ojosColorSol.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Música automática con manejo de autoplay bloqueado
+    const bgMusic = document.getElementById("bgMusic");
+    const playBtn = document.getElementById("playMusicBtn");
+
+    playBtn.addEventListener('click', () => {
+      bgMusic.play();
+      playBtn.style.display = 'none'; // ocultar botón al hacer clic
+    });
+    
+
+    // Contenedor de elementos flotantes
+    const floatingContainer = document.querySelector('.floating-elements');
+    const floatingImages = [ 
+      "./images/ghots.png",
+      "./images/calabaza.png",
+      "./images/bat.png"
+    ];
+
+    for (let i = 0; i < 20; i++) {
+      const element = document.createElement('div');
+      element.classList.add('floating-element');
+
+      const size = 20 + Math.random() * 20; 
+      element.style.width = size + 'px';
+      element.style.height = size + 'px';
+
+      element.style.left = Math.random() * 300 + 'vw';
+      element.style.backgroundImage = `url(${floatingImages[Math.floor(Math.random() * floatingImages.length)]})`;
+      element.style.animationDuration = (6 + Math.random() * 6) + 's';
+      element.style.animationDelay = Math.random() * 10 + 's';
+      floatingContainer.appendChild(element);
+    }
+
+    // Contador regresivo
+    const countdown = document.getElementById('countdown');
+    const eventDate = new Date("November 01, 2025 19:00:00").getTime();
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+
+      if (distance < 0) {
+        countdown.innerHTML = "¡La fiesta ha comenzado! 👻";
+        clearInterval(interval);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
